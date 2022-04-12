@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Contact;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -16,9 +17,23 @@ class ContactController extends AbstractController
      */
     public function index(): Response
     {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/ContactController.php',
-        ]);
+        $contacts = $this->getDoctrine()
+            ->getRepository(Contact::class)
+            ->findAll();
+        dump($contacts);
+        $data = [];
+
+        foreach ($contacts as $contact) {
+            $data[] = [
+                'id' => $contact->getId(),
+                'name' => $contact->getName(),
+                'firstName' => $contact->getFirstName(),
+                'email' => $contact->getEmail(),
+                'address' => $contact->getAddress(),
+                'phone' => $contact->getPhone(),
+                'age' => $contact->getAge(),
+            ];
+        }
+        return $this->json($data);
     }
 }
