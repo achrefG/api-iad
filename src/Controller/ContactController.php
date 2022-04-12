@@ -57,7 +57,7 @@ class ContactController extends AbstractController
         $entityManager->persist($contact);
         $entityManager->flush();
 
-        return $this->json('Created new project successfully with id ' . $contact->getId());
+        return $this->json('Created new contact successfully with id ' . $contact->getId());
     }
     #------------GET Request----GET CONTACT BY ID------------------------
     /**
@@ -71,7 +71,7 @@ class ContactController extends AbstractController
 
         if (!$contact) {
 
-            return $this->json('No project found for id :' . $id, 404);
+            return $this->json('No contact found for id: ' . $id, 404);
         }
 
         $data =  [
@@ -96,7 +96,7 @@ class ContactController extends AbstractController
         $contact = $entityManager->getRepository(Contact::class)->find($id);
 
         if (!$contact) {
-            return $this->json('No project found for id :' . $id, 404);
+            return $this->json('No contact found for id: ' . $id, 404);
         }
         $contact->setName($request->request->get('name'));
         $contact->setFirstName($request->request->get('firstName'));
@@ -117,5 +117,23 @@ class ContactController extends AbstractController
         ];
 
         return $this->json($data);
+    }
+    #------------DELETE Request----DELETE A CONTACT------------------------
+    /**
+     * @Route("/contact/{id}", name="contact_delete", methods={"DELETE"})
+     */
+    public function delete(int $id): Response
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $contact = $entityManager->getRepository(Contact::class)->find($id);
+
+        if (!$contact) {
+            return $this->json('No contact found for id: ' . $id, 404);
+        }
+
+        $entityManager->remove($contact);
+        $entityManager->flush();
+
+        return $this->json($contact->getName() . ' ' . $contact->getFirstName() . ' is successfully Deleted');
     }
 }
