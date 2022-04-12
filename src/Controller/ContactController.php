@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Contact;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -12,8 +13,9 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ContactController extends AbstractController
 {
+    #------------GET Request----CREATE NEW CONTACT------------------------
     /**
-     * @Route("/contact", name="app_contact")
+     * @Route("/contact", name="app_contact", methods={"GET"})
      */
     public function index(): Response
     {
@@ -35,5 +37,27 @@ class ContactController extends AbstractController
             ];
         }
         return $this->json($data);
+    }
+
+    #------------POST Request----CREATE NEW CONTACT------------------------
+    /**
+     * @Route("/project", name="project_new", methods={"POST"})
+     */
+    public function new(Request $request): Response
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $contact = new Contact();
+        $contact->setName($request->request->get('name'));
+        $contact->setFirstName($request->request->get('firstName'));
+        $contact->setEmail($request->request->get('email'));
+        $contact->setAddress($request->request->get('address'));
+        $contact->setPhone($request->request->get('phone'));
+        $contact->setAge($request->request->get('age'));
+
+        $entityManager->persist($contact);
+        $entityManager->flush();
+
+        return $this->json('Created new project successfully with id ' . $contact->getId());
     }
 }
